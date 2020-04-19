@@ -1,0 +1,23 @@
+version: "3"
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./data/db:/var/lib/mysql
+    restart: always
+    # command: mysqld --sql_mode=""
+    ports:
+      - "0.0.0.0:33061:3306"
+    volumes:
+      - ${PWD}/mysql-conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf
+      - ${PWD}/data/db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: xxx
+      MYSQL_DATABASE: xxx
+      MYSQL_USER: xxx
+      MYSQL_PASSWORD: xxx
+
+volumes:
+  mysql:
+    driver: "local"
+
