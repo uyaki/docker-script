@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  pxc01:
+    # restart: always
+    image: percona/percona-xtradb-cluster:5.7
+    container_name: pxc01
+    privileged: true
+    ports:
+      - 13306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - CLUSTER_NAME=pxc
+    volumes:
+      - ../data/v1:/var/lib/mysql
+
+networks:
+  default:
+    external:
+      name: mysql_network
