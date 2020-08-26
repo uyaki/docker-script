@@ -1,0 +1,30 @@
+version: '3'
+services: 
+  xxl_job_mysql: 
+    image: docker.io/mysql:5.6.49
+    container_name: xxl_job_mysql 
+    ports:
+      - "3307:3306" 
+    environment: 
+      MYSQL_USER: 'root'
+      MYSQL_PASS: 123456
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - /opt/xxl-job/mysql/data:/var/lib/mysql
+      - /opt/xxl-job/mysql/init:/docker-entrypoint-initdb.d/
+    networks: #加入指定网络
+      - net_xxl_job
+  xxl_job:
+    image: docker.io/xuxueli/xxl-job-admin:2.2.0
+    container_name: xxl_job
+    ports:
+      - "8081:8080"
+    environment:
+      PARAMS: '--spring.datasource.url=jdbc:mysql://xxl_job_mysql:3306/xxl_job?Unicode=true&characterEncoding=UTF-8 --spring.datasource.username=root  --spring.datasource.password=123456'
+    networks:
+      - net_xxl_job
+    depends_on:
+      - xxl_job_mysql
+networks:
+  net_xxl_job:
+    driver: bridge
