@@ -7,3 +7,5 @@
 $ docker-compose up -d
 ```
 [http://localhost:8081/xxl-job-admin](http://localhost:8081/xxl-job-admin)
+
+账密：admin/123456
