@@ -1,0 +1,16 @@
+version: "3"
+services:
+  seata-server:
+    image: seataio/seata-server:1.3.0
+    container_name: seata-server
+    hostname: seata-server
+    ports:
+      - "8091:8091"
+    volumes:
+      - ${PWD}/config:/root/seata-config
+    environment:
+      - SEATA_PORT=8091
+      - STORE_MODE=file
+      # 可选, 指定配置文件位置, 如 file:/root/registry, 将会加载 /root/registry.conf 作为配置文件
+      # 如果需要同时指定 file.conf文件，需要将registry.conf的config.file.name的值改为类似file:/root/file.conf
+      - SEATA_CONFIG_NAME=file:/root/seata-config/registry
