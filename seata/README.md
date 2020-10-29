@@ -152,6 +152,9 @@ CREATE INDEX idx_branch_id ON public.lock_table (branch_id);
 
 
 ### 客户端DB
+
+> 请在实际服务配置连接的DB里面执行脚本
+
 - AT 模式脚本 [client/at](https://github.com/seata/seata/blob/develop/script/client/at/db)
 
 ```sql
