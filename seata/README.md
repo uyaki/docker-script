@@ -60,9 +60,11 @@ service.disableGlobalTransaction=false
 
 - 使用sh脚本将修改好的配置发布到nacos
 
+> 登录nacos创建seata的namespace
+
 ```bash
 ## 命令格式
-$ sh ${SEATAPATH}/script/config-center/nacos/nacos-config.sh -h localhost -p 8848 -g SEATA_GROUP -t 5a3c7d6c-f497-4d68-a71a-2e5e3340b3ca -u username -w password
+$ sh ${SEATAPATH}/script/config-center/nacos/nacos-config.sh -h ${nacos-ip} -p ${nacos-port} -g ${nacos-group} -t ${nacos-namespace} -u ${nacos-username} -w ${nacos-password}
 ## 示例(使用默认nacos/nacos的账密时，无需设置-u、-w)
 $ sh ./nacos/nacos-config.sh -h localhost -p 8848 -g SEATA_GROUP -t 5a3c7d6c-f497-4d68-a71a-2e5e3340b3ca
 ```
