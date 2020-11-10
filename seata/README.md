@@ -63,8 +63,9 @@ service.disableGlobalTransaction=false
 > 登录nacos创建seata的namespace
 
 ```bash
+$ cd ${SEATAPATH}/script/config-center/nacos
 ## 命令格式
-$ sh ${SEATAPATH}/script/config-center/nacos/nacos-config.sh -h ${nacos-ip} -p ${nacos-port} -g ${nacos-group} -t ${nacos-namespace} -u ${nacos-username} -w ${nacos-password}
+$ sh nacos-config.sh -h ${nacos-ip} -p ${nacos-port} -g ${nacos-group} -t ${nacos-namespace} -u ${nacos-username} -w ${nacos-password}
 ## 示例(使用默认nacos/nacos的账密时，无需设置-u、-w)
 $ sh ./nacos/nacos-config.sh -h localhost -p 8848 -g SEATA_GROUP -t 5a3c7d6c-f497-4d68-a71a-2e5e3340b3ca
 ```
@@ -241,7 +242,7 @@ CREATE TABLE IF NOT EXISTS public.seata_state_inst
 );
 ```
 
-## 修改启动配置
+### 修改启动配置
 
 > 文件位置：`/config/registry.conf`
 
@@ -275,7 +276,7 @@ config {
 }
 
 ```
-## 启动nacos-server
+### 启动nacos-server
 ```yml
 version: "3"
 services:
@@ -294,3 +295,31 @@ services:
       # 如果需要同时指定 file.conf文件，需要将registry.conf的config.file.name的值改为类似file:/root/file.conf
       - SEATA_CONFIG_NAME=file:/root/seata-config/registry
 ```
+
+## 服务端
+
+### Q: 1. SpringCloud xid无法传递 ？
+A:
+
+1. 首先确保你引入了spring-cloud-alibaba-seata的依赖.
+2. 如果xid还无法传递,请确认你是否实现了WebMvcConfigurer,如果是,请参考`com.alibaba.cloud.seata.web.SeataHandlerInterceptorConfiguration#addInterceptors`的方法.把SeataHandlerInterceptor加入到你的拦截链路中.
+
+### Q: 2. 使用mybatis-plus 动态数据源组件后undolog无法删除 ？
+A:
+
+dynamic-datasource-spring-boot-starter 组件内部开启seata后会自动使用DataSourceProxy来包装DataSource,所以需要以下方式来保持兼容
+
+1. 如果你引入的是seata-all,请不要使用`@EnableAutoDataSourceProxy`注解.
+
+2. 如果你引入的是seata-spring-boot-starter 请关闭自动代理
+    ```yml
+    seata:
+      enable-auto-data-source-proxy: false
+    ```
+
+### Q: 3. AT 模式和 Spring @Transactional 注解连用时需要注意什么 ？
+
+A:
+
+`@Transactional` 可与 `DataSourceTransactionManager` 和 `JTATransactionManager` 连用分别表示本地事务和XA分布式事务，大家常用的是与本地事务结合。当与本地事务结合时，`@Transactional`和`@GlobalTransaction`连用，`@Transactional` 只能位于标注在`@GlobalTransaction` 的同一方法层次或者位于`@GlobalTransaction` 标注方法的内层。这里分布式事务的概念要大于本地事务，若将 `@Transactional` 标注在外层会导致分布式事务空提交，当 `@Transactional` 对应的 connection 提交时会报全局事务正在提交或者全局事务的xid不存在。
+
